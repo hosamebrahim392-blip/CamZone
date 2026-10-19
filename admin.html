@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  CamZone-EG | لوحة تحكم المشرف (ملف مستقل بجانب index.html)
+  الحماية الحقيقية في سياسات RLS داخل Supabase، وهذه الصفحة مجرد واجهة.
+  ============================================================ -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>CamZone-EG | لوحة المشرف</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* الألوان المعتمدة */
+:root{--bg:#1b1b1d;--card:#242526;--blue:#007fff;--orange:#ff7a1a;--text:#e3e3e3;--muted:#8d949e;--line:#34363a;--ok:#3ddc84;--bad:#ff4d4d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',Tahoma,sans-serif;line-height:1.7}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header.top{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;padding:10px 16px}
+header.top b{color:var(--blue);text-shadow:0 0 10px var(--blue);margin-inline-end:auto}
+header.top small{color:var(--muted)}
+a{color:var(--blue)}
+.panel,.pcard,.ocard,.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;transition:.25s}
+.pcard:hover,.ocard:hover,.stat:hover{transform:translateY(-5px);border-color:var(--blue);box-shadow:0 0 0 1px var(--blue),0 10px 28px rgba(0,127,255,.3)}
+.pcard.off{opacity:.5}
+input,select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:inherit}
+input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 10px rgba(0,127,255,.5)}
+label{display:block;color:var(--muted);font-size:.85rem}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:8px 14px;min-height:40px;transition:.2s}
+button:hover{border-color:var(--blue);box-shadow:0 0 12px rgba(0,127,255,.5)}
+button.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+button.warn{background:var(--orange);border-color:var(--orange);color:#1b1b1d;font-weight:600}
+button.danger:hover{border-color:var(--bad);box-shadow:0 0 12px var(--bad)}
+.tabs{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto}
+.tabs button.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 14px rgba(0,127,255,.6)}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+h3{margin-bottom:10px}h4{margin-bottom:4px}small{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.stat strong{display:block;font-size:1.5rem;color:var(--orange);text-shadow:0 0 12px rgba(255,122,26,.5)}
+.stat.net strong{color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{padding:8px;border-bottom:1px solid var(--line);text-align:start}
+th{color:var(--muted);font-weight:600}
+.scroll{overflow-x:auto}
+.badge{display:inline-block;padding:1px 10px;border-radius:20px;border:1px solid var(--orange);color:var(--orange);font-size:.8rem}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--orange);border-radius:12px;padding:10px 18px;display:none;z-index:99}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top">
+  <b>CamZone-EG | المشرف</b><small id="who"></small>
+  <a href="index.html">المتجر</a><button id="out" hidden>خروج</button>
+</header>
+
+<main class="wrap">
+  <!-- شاشة تسجيل الدخول -->
+  <section class="panel" id="loginBox" style="max-width:420px;margin:40px auto">
+    <h3>تسجيل دخول المشرف</h3>
+    <label>البريد الإلكتروني<input type="email" id="email" autocomplete="username"></label><br>
+    <label>كلمة المرور<input type="password" id="pass" autocomplete="current-password"></label><br>
+    <button class="pri" id="loginBtn" style="width:100%">دخول</button>
+    <p id="loginMsg" style="color:var(--bad);margin-top:8px"></p>
+  </section>
+
+  <!-- اللوحة (تظهر بعد الدخول) -->
+  <div id="app" hidden>
+    <nav class="tabs">
+      <button data-t="products" class="on">المنتجات</button>
+      <button data-t="orders">الطلبات</button>
+      <button data-t="report">التقرير المالي</button>
+    </nav>
+
+    <div id="tab-products">
+      <div class="panel">
+        <h3>إضافة منتج</h3>
+        <div class="g4">
+          <label>الماركة<input id="nBrand" list="brands" placeholder="hikvision"></label>
+          <label>النوع<select id="nCat">
+            <option value="camera">كاميرا</option><option value="dvr">DVR</option><option value="cable">سلك (سعر المتر)</option>
+            <option value="box">باوط</option><option value="rack">راك</option><option value="hdd">هارد</option></select></label>
+          <label>الاسم<input id="nName"></label>
+          <label id="nSpecL">الدقة / عدد القنوات<input id="nSpec" placeholder="2MP أو 8"></label>
+          <label>سعر الفني<input id="nPrice" type="number" step="any" min="0"></label>
+          <label>التكلفة<input id="nCost" type="number" step="any" min="0"></label>
+          <label>الكمية المستلمة<input id="nRec" type="number" min="0" value="0"></label>
+        </div>
+        <datalist id="brands"><option value="hikvision"><option value="dahua"><option value="general"></datalist>
+        <button class="pri" id="addBtn">إضافة</button>
+      </div>
+
+      <div class="panel">
+        <h3>تحديث جماعي بنسبة مئوية</h3>
+        <div class="row">
+          <label>الماركة<select id="bBrand"></select></label>
+          <label>النسبة % (سالب للتخفيض)<input id="bPct" type="number" step="any" value="5"></label>
+          <label>يطبق على<select id="bTarget"><option value="both">التكلفة وسعر الفني</option><option value="cost">التكلفة فقط</option><option value="price">سعر الفني فقط</option></select></label>
+          <button class="warn" id="bBtn">تطبيق</button>
+        </div>
+      </div>
+      <div id="plist"></div>
+    </div>
+
+    <div id="tab-orders" hidden></div>
+    <div id="tab-report" hidden></div>
+  </div>
+</main>
+<div id="toast"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ===== أدوات مساعدة ===== */
+const $ = id => document.getElementById(id);
+// تنظيف النصوص قبل عرضها (مهم: بيانات العملاء غير موثوقة، فنمنع حقن HTML)
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const N = v => Math.round(+v || 0).toLocaleString('ar-EG');
+const CAT = { camera:'كاميرا', dvr:'DVR', cable:'سلك', box:'باوط', rack:'راك', hdd:'هارد' };
+const STATUS = { new:'جديد', shipping:'جاري الشحن', delivered:'تم التسليم', cancelled:'ملغي' };
+let tt; function toast(m){ const t=$('toast'); t.textContent=m; t.style.display='block'; clearTimeout(tt); tt=setTimeout(()=>t.style.display='none',3000); }
+
+const cfg = window.CZ || {};
+if (!cfg.URL || cfg.URL.includes('YOUR-')) { $('loginMsg').textContent = 'عدّل ملف config.js أولاً (رابط ومفتاح Supabase)'; $('loginBtn').disabled = true; }
+const sb = (!$('loginBtn').disabled) ? window.supabase.createClient(cfg.URL, cfg.KEY) : null;
+
+let products = [], orders = [];
+// التكلفة تأتي مدمجة من product_costs (قد تكون كائن أو مصفوفة حسب إصدار PostgREST)
+const costOf = p => Array.isArray(p.product_costs) ? (p.product_costs[0] || {}) : (p.product_costs || {});
+const specTxt = p => p.category === 'camera' ? (p.spec.res || '') : p.category === 'dvr' ? ((p.spec.channels || '') + ' قناة') : '';
+
+/* ===== تسجيل الدخول (Supabase Auth) ===== */
+async function enter(user){
+  // نتأكد أن الحساب مسجل في جدول admins، وإلا نخرجه
+  const { data } = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle();
+  if (!data){ await sb.auth.signOut(); $('loginMsg').textContent = 'هذا الحساب ليس مشرفاً'; return; }
+  $('loginBox').hidden = true; $('app').hidden = false; $('out').hidden = false; $('who').textContent = user.email;
+  loadAll();
+}
+$('loginBtn').onclick = async () => {
+  $('loginMsg').textContent = '';
+  const { data, error } = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('pass').value });
+  if (error) return $('loginMsg').textContent = 'بيانات الدخول غير صحيحة';
+  enter(data.user);
+};
+$('out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+if (sb) sb.auth.getSession().then(({ data }) => { if (data.session) enter(data.session.user); });
+
+/* ===== التبويبات ===== */
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  ['products','orders','report'].forEach(t => $('tab-' + t).hidden = (t !== b.dataset.t));
+});
+
+/* ===== تحميل البيانات ===== */
+async function loadAll(){
+  const a = await sb.from('products').select('*, product_costs(*)').order('brand').order('category').order('name');
+  const b = await sb.from('orders').select('*').order('created_at', { ascending: false });
+  if (a.error || b.error) return toast('تعذر تحميل البيانات (راجع سياسات الأمان وحساب المشرف)');
+  products = a.data; orders = b.data;
+  renderProducts(); renderOrders(); renderReport();
+}
+const done = (err, ok) => { if (err){ console.error(err); toast('حدث خطأ: ' + (err.message || '')); } else { toast(ok); loadAll(); } };
+
+/* ===== المنتجات (CRUD) ===== */
+function renderProducts(){
+  const brands = [...new Set(products.map(p => p.brand))];
+  $('bBrand').innerHTML = brands.map(b => `<option>${esc(b)}</option>`).join('');
+  $('plist').innerHTML = products.map(p => { const c = costOf(p); return `
+    <div class="pcard ${p.active ? '' : 'off'}" data-id="${esc(p.id)}">
+      <h4>${esc(p.name)} <span class="badge">${esc(p.brand)} · ${CAT[p.category]} ${esc(specTxt(p))}</span></h4>
+      <div class="g4">
+        <label>سعر الفني<input data-f="tech_price" type="number" step="any" value="${+p.tech_price}"></label>
+        <label>التكلفة<input data-f="cost" type="number" step="any" value="${+c.cost || 0}"></label>
+        <label>المستلم<input data-f="stock_received" type="number" value="${+c.stock_received || 0}"></label>
+        <label>المتبقي<input data-f="stock_remaining" type="number" value="${+c.stock_remaining || 0}"></label>
+      </div>
+      <div class="row">
+        <button class="pri" data-a="save">حفظ</button>
+        <button data-a="toggle">${p.active ? 'إخفاء من الحاسبة' : 'إظهار'}</button>
+        <button class="danger" data-a="del">حذف</button>
+      </div></div>`; }).join('') || '<p style="color:var(--muted)">لا توجد منتجات. شغّل ملف SQL أو أضف منتجاً.</p>';
+}
+// أزرار الحفظ/الإخفاء/الحذف (Event Delegation)
+$('plist').onclick = async e => {
+  const a = e.target.dataset.a; if (!a) return;
+  const card = e.target.closest('.pcard'), id = card.dataset.id, p = products.find(x => x.id === id);
+  const v = f => card.querySelector(`[data-f="${f}"]`).value;
+  if (a === 'save'){
+    const r1 = await sb.from('products').update({ tech_price: +v('tech_price') }).eq('id', id);
+    const r2 = await sb.from('product_costs').upsert({ product_id: id, cost: +v('cost'), stock_received: +v('stock_received') || 0, stock_remaining: +v('stock_remaining') || 0 });
+    done(r1.error || r2.error, 'تم الحفظ');
+  } else if (a === 'toggle'){
+    const r = await sb.from('products').update({ active: !p.active }).eq('id', id); done(r.error, p.active ? 'تم الإخفاء' : 'تم الإظهار');
+  } else if (a === 'del'){
+    if (!confirm('حذف "' + p.name + '" نهائياً؟')) return;
+    const r = await sb.from('products').delete().eq('id', id); done(r.error, 'تم الحذف');
+  }
+};
+// إضافة منتج جديد
+$('addBtn').onclick = async () => {
+  const cat = $('nCat').value, brand = $('nBrand').value.trim().toLowerCase(), name = $('nName').value.trim(), sv = $('nSpec').value.trim();
+  if (!brand || !name || $('nPrice').value === '') return toast('أكمل الماركة والاسم والسعر');
+  const spec = cat === 'camera' ? { res: sv.toUpperCase() } : cat === 'dvr' ? { channels: +sv } : {};
+  if ((cat === 'camera' && !sv) || (cat === 'dvr' && !(+sv > 0))) return toast('اكتب الدقة (مثل 2MP) أو عدد القنوات');
+  const r = await sb.from('products').insert({ brand, category: cat, name, spec, tech_price: +$('nPrice').value }).select('id').single();
+  if (r.error) return done(r.error);
+  const r2 = await sb.from('product_costs').insert({ product_id: r.data.id, cost: +$('nCost').value || 0, stock_received: +$('nRec').value || 0, stock_remaining: +$('nRec').value || 0 });
+  ['nName','nSpec','nPrice','nCost'].forEach(i => $(i).value = '');
+  done(r2.error, 'تمت الإضافة');
+};
+// تحديث جماعي لماركة
+$('bBtn').onclick = async () => {
+  const brand = $('bBrand').value, pct = +$('bPct').value;
+  if (!brand || !pct) return toast('اختر ماركة ونسبة');
+  if (!confirm(`تطبيق ${pct}% على كل منتجات ${brand}؟`)) return;
+  const r = await sb.rpc('bulk_adjust', { p_brand: brand, p_pct: pct, p_target: $('bTarget').value });
+  done(r.error, 'تم التحديث');
+};
+
+/* ===== الطلبات ===== */
+function renderOrders(){
+  $('tab-orders').innerHTML = orders.map(o => `
+    <div class="ocard" data-id="${+o.id}">
+      <h4>طلب #${+o.id} <small>${esc(new Date(o.created_at).toLocaleString('ar-EG'))}</small></h4>
+      <p>${esc(o.name)} · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a><br><small>${esc(o.address)}</small></p>
+      <p><small>${(o.items || []).map(esc).join(' + ')}</small></p>
+      <p>الإجمالي: <b style="color:var(--orange)">${N(o.total)} ج</b> · ربح الفني: ${N(o.profit)} ج · ${esc(o.payment)}</p>
+      <label>الحالة<select data-s>${Object.keys(STATUS).map(k => `<option value="${k}" ${o.status === k ? 'selected' : ''}>${STATUS[k]}</option>`).join('')}</select></label>
+    </div>`).join('') || '<p style="color:var(--muted)">لا توجد طلبات بعد.</p>';
+}
+$('tab-orders').onchange = async e => {
+  if (!e.target.matches('[data-s]')) return;
+  const id = e.target.closest('.ocard').dataset.id;
+  const r = await sb.from('orders').update({ status: e.target.value }).eq('id', id); done(r.error, 'تم تحديث الحالة');
+};
+
+/* ===== التقرير المالي الختامي ===== */
+function renderReport(){
+  let rec = 0, rem = 0, recVal = 0, remVal = 0, cogs = 0, rev = 0; const rows = [];
+  products.forEach(p => {
+    const c = costOf(p), R = +c.stock_received || 0, M = +c.stock_remaining || 0, cost = +c.cost || 0, pr = +p.tech_price;
+    const S = Math.max(0, R - M);                       // المباع = المستلم - المتبقي
+    rec += R; rem += M; recVal += R * cost; remVal += M * cost; cogs += S * cost; rev += S * pr;
+    if (S) rows.push(`<tr><td>${esc(p.name)}</td><td>${S}</td><td>${N(S * pr)}</td><td>${N(S * (pr - cost))}</td></tr>`);
+  });
+  const del = orders.filter(o => o.status === 'delivered');
+  const sum = k => del.reduce((s, o) => s + (+o[k] || 0), 0);
+  const card = (t, v, cls) => `<div class="stat ${cls || ''}"><small>${t}</small><strong>${v}</strong></div>`;
+  $('tab-report').innerHTML =
+    `<div class="stats">` +
+      card('البضائع المستلمة (وحدة)', N(rec) + ' <small>بقيمة ' + N(recVal) + ' ج</small>') +
+      card('المخزون المتبقي (وحدة)', N(rem) + ' <small>بقيمة ' + N(remVal) + ' ج</small>') +
+      card('المنتجات المباعة (وحدة)', N(rec - rem)) +
+      card('إجمالي الإيرادات', N(rev) + ' ج') +
+      card('تكلفة المباع', N(cogs) + ' ج') +
+      card('صافي أرباح المنصة', N(rev - cogs) + ' ج', 'net') +
+    `</div>
+    <div class="panel" style="margin-top:14px"><h3>الطلبات المسلّمة</h3>
+      <p>العدد: <b>${del.length}</b> · مبيعات الفنيين للعملاء: <b>${N(sum('total'))} ج</b> · أرباح الفنيين: <b>${N(sum('profit'))} ج</b></p></div>
+    <div class="panel"><h3>المباع حسب المنتج</h3><div class="scroll"><table>
+      <tr><th>المنتج</th><th>المباع</th><th>الإيراد</th><th>ربح المنصة</th></tr>${rows.join('') || '<tr><td colspan="4">لا مبيعات بعد</td></tr>'}</table></div></div>`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  CamZone-EG | الجزء 1: الصفحة الرئيسية + حاسبة الأسعار
+  ملف واحد جاهز للرفع على GitHub Pages باسم index.html
+  ============================================================ -->
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CamZone-EG | كاميرات مراقبة وتركيب</title>
+<!-- خط Cairo للعربي (لو اتحجب، المتصفح بيستخدم Tahoma تلقائياً) -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+/* ===== 1) الألوان: عدّل من هنا فقط ===== */
+:root{
+  --bg:#1b1b1d;      /* الخلفية الأساسية */
+  --card:#242526;    /* البطاقات */
+  --blue:#007fff;    /* أزرق نيون */
+  --orange:#ff7a1a;  /* برتقالي نيون */
+  --text:#e3e3e3;    /* العناوين والنصوص */
+  --muted:#8d949e;   /* الشروحات */
+  --line:#34363a;    /* الحدود */
+  --nav-h:64px;      /* ارتفاع الشريط العلوي */
+}
+/* الثيم الفاتح (يتفعل بزر تبديل الثيم) */
+[data-theme="light"]{
+  --bg:#f2f4f7; --card:#ffffff; --text:#1b1b1d; --muted:#5b636e; --line:#d8dce2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 12px)}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',Tahoma,sans-serif;line-height:1.7;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:0;color:inherit}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+/* ===== 2) الشريط العلوي (Navbar) ===== */
+.navbar{position:fixed;inset:0 0 auto 0;height:var(--nav-h);background:var(--card);border-bottom:1px solid var(--line);z-index:50}
+.navbar .wrap{height:100%;display:flex;align-items:center;gap:14px}
+.logo{font-weight:800;font-size:1.3rem}
+.logo b{color:var(--blue);text-shadow:0 0 12px var(--blue)}      /* توهج اللوجو */
+.links{display:flex;gap:22px;margin-inline-start:auto}
+.links a{color:var(--muted);transition:color .2s}
+.links a:hover{color:var(--blue)}
+.icon-btn{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 12px;transition:.2s}
+.icon-btn:hover{border-color:var(--blue);box-shadow:0 0 12px rgba(0,127,255,.5)}
+.admin-btn{background:var(--orange);color:#1b1b1d;font-weight:600;border-radius:10px;padding:6px 14px;transition:.2s}
+.admin-btn:hover{box-shadow:0 0 16px var(--orange)}
+.burger{display:none}
+
+/* القائمة الجانبية للموبايل (Sidebar) */
+.sidebar{position:fixed;top:0;bottom:0;inset-inline-start:0;width:260px;background:var(--card);border-inline-end:1px solid var(--line);
+  transform:translateX(100%);transition:transform .3s;z-index:70;padding:80px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.sidebar.open{transform:translateX(0)}
+.sidebar a{padding:10px 12px;border-radius:10px;color:var(--muted)}
+.sidebar a:hover{background:var(--bg);color:var(--blue)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:.3s;z-index:60}
+.overlay.show{opacity:1;pointer-events:auto}
+@media (max-width:800px){
+  .links{display:none}
+  .burger{display:inline-block;margin-inline-start:auto}
+  .navbar .wrap{gap:8px}
+}
+
+/* ===== 3) الواجهة الرئيسية (Hero) ===== */
+.hero{padding:calc(var(--nav-h) + 56px) 0 48px;text-align:center}
+.hero h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:800;line-height:1.35}
+.hero h1 span{color:var(--blue);text-shadow:0 0 24px rgba(0,127,255,.7)}
+.hero p{color:var(--muted);max-width:560px;margin:14px auto 26px}
+.btn{display:inline-block;padding:12px 26px;border-radius:12px;font-weight:600;font-size:1rem;transition:.2s}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{box-shadow:0 0 22px var(--blue);transform:translateY(-2px)}
+.btn-orange{background:var(--orange);color:#1b1b1d}
+.btn-orange:hover{box-shadow:0 0 22px var(--orange);transform:translateY(-2px)}
+
+/* ===== 4) بطاقات الخدمات (Features Grid) ===== */
+section{padding:40px 0}
+h2.title{font-size:1.6rem;margin-bottom:6px}
+.sub{color:var(--muted);margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;transition:transform .25s,box-shadow .25s,border-color .25s}
+/* تأثير النيون + الارتفاع 5px عند التمرير أو اللمس */
+.card:hover,.card:active{transform:translateY(-5px);border-color:var(--blue);box-shadow:0 0 0 1px var(--blue),0 10px 30px rgba(0,127,255,.35)}
+.card .ico{font-size:1.8rem;margin-bottom:8px;filter:drop-shadow(0 0 8px var(--orange))}
+.card h3{font-size:1.05rem;margin-bottom:4px}
+.card p{color:var(--muted);font-size:.92rem}
+
+/* ===== 5) الحاسبة ===== */
+.calc{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.calc{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.panel h3{margin-bottom:10px;font-size:1.05rem}
+.group{margin-bottom:18px}
+.group label.cap{display:block;color:var(--muted);font-size:.9rem;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+/* الخيارات القابلة للنقر (Click-to-Select) */
+.chip{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 16px;transition:.2s}
+.chip:hover{border-color:var(--blue);transform:translateY(-2px)}
+.chip.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 16px rgba(0,127,255,.7)}
+input[type=number],input[type=text],input[type=tel],textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:1rem}
+input:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 10px rgba(0,127,255,.5)}
+.row{display:flex;gap:10px;align-items:center}
+.switch{display:flex;align-items:center;gap:8px;margin-bottom:14px;color:var(--muted);cursor:pointer}
+.tech-only{display:none;border:1px dashed var(--orange);border-radius:12px;padding:14px;margin-bottom:16px}
+body.tech .tech-only{display:block}      /* وضع الفني يظهر الأقسام المخفية */
+.line-cost{display:none}                  /* تكلفة كل بند: مخفية عن العميل */
+body.tech .line-cost{display:inline}
+
+/* باقة العميل */
+.package{position:sticky;top:calc(var(--nav-h) + 12px);border-color:var(--blue);box-shadow:0 0 24px rgba(0,127,255,.25)}
+.package ul{list-style:none;margin:10px 0 14px}
+.package li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.package li span:last-child{color:var(--muted)}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin:12px 0}
+.total strong{font-size:1.9rem;color:var(--orange);text-shadow:0 0 14px rgba(255,122,26,.6)}
+.tech-box{display:none;background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.92rem}
+body.tech .tech-box{display:block}
+.tech-box div{display:flex;justify-content:space-between}
+.tech-box .net{color:#3ddc84;font-weight:600}
+.send{width:100%}
+
+/* نافذة بيانات العميل */
+dialog{margin:auto;background:var(--card);color:var(--text);border:1px solid var(--blue);border-radius:16px;padding:22px;width:min(420px,92vw);box-shadow:0 0 40px rgba(0,127,255,.4)}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+dialog .field{margin-bottom:12px}
+dialog .field label{display:block;color:var(--muted);font-size:.9rem;margin-bottom:4px}
+
+/* إشعار منبثق */
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,40px);background:var(--card);border:1px solid var(--orange);border-radius:12px;padding:10px 18px;opacity:0;transition:.3s;z-index:99;box-shadow:0 0 20px rgba(255,122,26,.4)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{border-top:1px solid var(--line);padding:24px 0;text-align:center;color:var(--muted);font-size:.9rem;margin-top:30px}
+
+/* ===== المصمم ثلاثي الأبعاد ===== */
+.d3-bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.d3-bar .chip{white-space:nowrap;min-height:44px;flex:0 0 auto}
+.d3-opts,.d3-sel{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.d3-sel[hidden]{display:none}
+.d3-sel label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.9rem}
+#d3CamCtl{display:none;flex-wrap:wrap;gap:10px;align-items:center}
+.d3-opts select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+/* مساحة الرسم: سوداء بحدود نيون */
+.d3-wrap{height:min(70vh,560px);min-height:380px;background:#0a0a0c;border:1px solid var(--blue);border-radius:16px;overflow:hidden;box-shadow:0 0 28px rgba(0,127,255,.4)}
+.d3-wrap canvas{width:100%;height:100%;display:block;touch-action:none}
+.d3-hint{color:var(--orange);font-size:.92rem;margin-top:8px;min-height:1.5em}
+.d3-hud{color:var(--muted);font-size:.9rem;margin-top:6px}
+
+/* احترام من يفضّل تقليل الحركة */
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<!-- ===== الشريط العلوي ===== -->
+<header class="navbar">
+  <div class="wrap">
+    <a href="#top" class="logo">Cam<b>Zone</b>-EG</a>
+    <nav class="links">
+      <a href="#designer">المصمم 3D</a>
+      <a href="#services">الخدمات</a>
+      <a href="#calc">حاسبة الباقات</a>
+      <a href="#contact">تواصل معنا</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="تبديل الثيم">🌓</button>
+    <button class="admin-btn" id="adminBtn">لوحة التحكم</button>
+    <button class="icon-btn burger" id="burger" aria-label="فتح القائمة">☰</button>
+  </div>
+</header>
+
+<!-- القائمة الجانبية للموبايل -->
+<div class="overlay" id="overlay"></div>
+<aside class="sidebar" id="sidebar">
+  <a href="#designer">المصمم 3D</a>
+      <a href="#services">الخدمات</a>
+  <a href="#calc">حاسبة الباقات</a>
+  <a href="#contact">تواصل معنا</a>
+</aside>
+
+<main id="top">
+  <!-- ===== الواجهة ===== -->
+  <div class="hero wrap">
+    <h1>أمّن مكانك بكاميرات <span>Hikvision</span> و<span>Dahua</span></h1>
+    <p>احسب سعر باقة المراقبة بنفسك في ثواني، واطلب التركيب والدفع عند التسليم.</p>
+    <a href="#calc" class="btn btn-blue">احسب باقتك الآن</a>
+  </div>
+
+  <!-- ===== المصمم ثلاثي الأبعاد: المحتوى يُبنى من designer.js ===== -->
+  <section id="designer"><div class="wrap">
+    <h2 class="title">صمّم منظومتك 3D</h2>
+    <p class="sub">ارسم المكان، ركّب الكاميرات، ومدّ الكابلات، وانقل الأعداد للحاسبة بضغطة.</p>
+    <div id="d3"></div>
+  </div></section>
+
+  <!-- ===== الخدمات ===== -->
+  <section id="services"><div class="wrap">
+    <h2 class="title">خدماتنا</h2>
+    <p class="sub">كل اللي محتاجه لمنظومة مراقبة كاملة في مكان واحد.</p>
+    <!-- لإضافة خدمة: انسخ بطاقة .card كاملة وغيّر الأيقونة والنص -->
+    <div class="grid">
+      <div class="card"><div class="ico">📹</div><h3>كاميرات مراقبة</h3><p>كاميرات داخلية وخارجية بدقة 2 و5 ميجابكسل.</p></div>
+      <div class="card"><div class="ico">💾</div><h3>أجهزة تسجيل DVR</h3><p>من 4 إلى 32 قناة مع هارد تخزين.</p></div>
+      <div class="card"><div class="ico">🔌</div><h3>أسلاك ومستلزمات</h3><p>كابلات وبواطات وراكات وكل التوصيلات.</p></div>
+      <div class="card"><div class="ico">🛠️</div><h3>تركيب وصيانة</h3><p>فنيين متخصصين لتركيب وضبط المنظومة.</p></div>
+    </div>
+  </div></section>
+
+  <!-- ===== حاسبة الباقات ===== -->
+  <section id="calc"><div class="wrap">
+    <h2 class="title">حاسبة الباقات</h2>
+    <p class="sub">اختار الماركة وعدد الكاميرات والملحقات، والسعر بيتحدث فوراً.</p>
+
+    <div class="calc">
+      <!-- يمين: الاختيارات -->
+      <div class="panel">
+        <label class="switch"><input type="checkbox" id="techToggle"> وضع الفني (إظهار التكلفة والربح)</label>
+
+        <div class="group"><label class="cap">الماركة</label><div class="chips" id="brandChips"></div></div>
+        <div class="group"><label class="cap">دقة الكاميرا</label><div class="chips" id="resChips"></div></div>
+        <div class="group"><label class="cap">عدد الكاميرات</label><div class="chips" id="camChips"></div></div>
+
+        <div class="group">
+          <label class="cap">الملحقات</label>
+          <div class="chips" id="accChips"></div>
+        </div>
+        <div class="group">
+          <label class="cap" for="cableInput">أمتار السلك</label>
+          <input type="number" id="cableInput" min="0" step="5" value="0">
+        </div>
+        <div class="group">
+          <label class="cap" for="boxInput">عدد البواطات</label>
+          <input type="number" id="boxInput" min="0" step="1" value="0">
+        </div>
+
+        <!-- خانات الفني: مخفية عن العميل -->
+        <div class="tech-only">
+          <label class="cap" style="color:var(--orange)">هامش الربح / المصنعية</label>
+          <div class="chips" id="modeChips" style="margin-bottom:10px"></div>
+          <input type="number" id="marginInput" min="0" step="1" value="20" aria-label="قيمة الربح">
+        </div>
+      </div>
+
+      <!-- يسار: الباقة -->
+      <div class="panel package">
+        <h3>باقتك</h3>
+        <ul id="pkgList"></ul>
+        <div class="tech-box">
+          <div><span>التكلفة</span><span id="costVal">0</span></div>
+          <div><span>الربح</span><span id="profitVal">0</span></div>
+          <div class="net"><span>صافي ربح الفني</span><span id="netVal">0</span></div>
+        </div>
+        <div class="total"><span>الإجمالي</span><strong id="totalVal">0 ج</strong></div>
+        <button class="btn btn-orange send" id="sendBtn">إرسال الطلب (الدفع عند التسليم)</button>
+      </div>
+    </div>
+  </div></section>
+
+  <section id="contact"><div class="wrap">
+    <h2 class="title">تواصل معنا</h2>
+    <p class="sub">للاستفسار قبل الطلب، كلمنا على واتساب. (عدّل الرقم من فوق في السكريبت)</p>
+    <a class="btn btn-blue" id="waBtn" href="#" target="_blank" rel="noopener">واتساب</a>
+  </div></section>
+</main>
+
+<footer>© <span id="yr"></span> CamZone-EG — جميع الحقوق محفوظة</footer>
+
+<!-- نافذة بيانات العميل -->
+<dialog id="orderDlg">
+  <h3 style="margin-bottom:14px">بيانات الطلب</h3>
+  <div class="field"><label for="oName">الاسم</label><input type="text" id="oName"></div>
+  <div class="field"><label for="oPhone">رقم الموبايل</label><input type="tel" id="oPhone" placeholder="01xxxxxxxxx"></div>
+  <div class="field"><label for="oAddr">العنوان</label><textarea id="oAddr" rows="2"></textarea></div>
+  <div class="row">
+    <button class="btn btn-orange" id="confirmBtn" style="flex:1">تأكيد الطلب</button>
+    <button class="btn icon-btn" id="cancelBtn">إلغاء</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<!-- إعدادات Supabase ثم المكتبة (نسخة ثابتة) -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ==========================================================
+   الإعدادات والأسعار — عدّل الأرقام هنا فقط
+   الأسعار بالجنيه المصري وهي أرقام تجريبية، استبدلها بأسعار التكلفة الحقيقية.
+   تنبيه: أي رقم في هذا الملف يقدر يشوفه أي زائر من أدوات المتصفح.
+   الحماية الحقيقية للتكلفة هتتم بعد ربط Supabase في جزء لاحق.
+   ========================================================== */
+const WHATSAPP = '201000000000';          // رقم واتساب بدون + (بصيغة دولية)
+
+const PRICES = {
+  hikvision: { name: 'Hikvision',
+    cam: { '2MP': 900, '5MP': 1500 },                // سعر الكاميرا الواحدة
+    dvr: { 4: 1400, 8: 2200, 16: 3800, 32: 7500 } }, // سعر الـ DVR حسب عدد القنوات
+  dahua: { name: 'Dahua',
+    cam: { '2MP': 850, '5MP': 1400 },
+    dvr: { 4: 1300, 8: 2100, 16: 3600, 32: 7200 } }
+};
+const CAM_COUNTS = [2, 4, 8, 16, 32];               // الأعداد المتاحة للاختيار
+let CABLE_PER_M = 12;                             // سعر متر السلك
+let BOX_PRICE   = 45;                             // سعر الباوط الواحد
+const ACCESSORIES = {                               // ملحقات تُختار بنقرة (بدون كمية)
+  rack: { name: 'راك', price: 1800 },
+  hdd:  { name: 'هارد 1 تيرا', price: 2400 }
+};
+
+/* معرّفات المنتجات من قاعدة البيانات: ترسل مع الطلب ليتحقق الخادم من الأسعار الحقيقية */
+const IDS = {};   // مثال: IDS.cable / IDS.box / IDS.rack / IDS.hdd
+
+/* ===== الحالة الحالية للحاسبة ===== */
+const state = { brand:'hikvision', res:'2MP', cams:4, acc:{rack:false,hdd:false}, cable:0, box:0, mode:'percent', margin:20 };
+
+/* اختصارات */
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(n).toLocaleString('ar-EG');
+
+/* ===== بناء الخيارات القابلة للنقر ===== */
+// دالة عامة: تبني مجموعة Chips وتنادي onPick عند الاختيار
+function buildChips(containerId, items, isActive, onPick){
+  const box = $(containerId); box.innerHTML = '';
+  items.forEach(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip' + (isActive(it.key) ? ' active' : ''); b.textContent = it.label;
+    b.onclick = () => { onPick(it.key); render(); };
+    box.appendChild(b);
+  });
+}
+
+/* ===== حساب الباقة ===== */
+function calculate(){
+  const p = PRICES[state.brand];
+  // اختيار الـ DVR تلقائياً: أصغر جهاز عدد قنواته يكفي عدد الكاميرات
+  const channels = Object.keys(p.dvr).map(Number).sort((a,b)=>a-b).find(c => c >= state.cams);
+  const lines = [
+    { label: `${state.cams} كاميرا ${p.name} ${state.res}`, cost: p.cam[state.res] * state.cams, pid: (p.camId || {})[state.res], qty: state.cams },
+    { label: `DVR ${channels} قناة`, cost: p.dvr[channels], pid: (p.dvrId || {})[channels], qty: 1 }
+  ];
+  if (state.cable > 0) lines.push({ label: `سلك ${state.cable} متر`, cost: state.cable * CABLE_PER_M, pid: IDS.cable, qty: state.cable });
+  if (state.box > 0)   lines.push({ label: `${state.box} باوط`, cost: state.box * BOX_PRICE, pid: IDS.box, qty: state.box });
+  Object.keys(ACCESSORIES).forEach(k => { if (state.acc[k]) lines.push({ label: ACCESSORIES[k].name, cost: ACCESSORIES[k].price, pid: IDS[k], qty: 1 }); });
+
+  const cost = lines.reduce((s,l) => s + l.cost, 0);
+  // الربح: نسبة من التكلفة أو مبلغ ثابت — إجمالي البيع = التكلفة + الربح
+  const profit = state.mode === 'percent' ? cost * state.margin / 100 : state.margin;
+  return { lines, cost, profit, total: cost + profit };
+}
+
+/* ===== رسم الواجهة ===== */
+function render(){
+  buildChips('brandChips', Object.keys(PRICES).map(k => ({key:k,label:PRICES[k].name})), k => k===state.brand, k => state.brand = k);
+  buildChips('resChips', Object.keys(PRICES[state.brand].cam).map(k => ({key:k,label:k})), k => k===state.res, k => state.res = k);
+  buildChips('camChips', CAM_COUNTS.map(n => ({key:n,label:String(n)})), k => k===state.cams, k => state.cams = k);
+  buildChips('accChips', Object.keys(ACCESSORIES).map(k => ({key:k,label:ACCESSORIES[k].name})), k => state.acc[k], k => state.acc[k] = !state.acc[k]);
+  buildChips('modeChips', [{key:'percent',label:'نسبة %'},{key:'fixed',label:'مبلغ ثابت'}], k => k===state.mode, k => state.mode = k);
+
+  const r = calculate();
+  // قائمة الباقة: العميل يشوف البنود فقط، والفني يشوف التكلفة بجانب كل بند
+  $('pkgList').innerHTML = r.lines.map(l =>
+    `<li><span>${l.label}</span><span class="line-cost">${fmt(l.cost)} ج</span></li>`).join('');
+  $('costVal').textContent   = fmt(r.cost) + ' ج';
+  $('profitVal').textContent = fmt(r.profit) + ' ج';
+  $('netVal').textContent    = fmt(r.profit) + ' ج';
+  $('totalVal').textContent  = fmt(r.total) + ' ج';
+}
+
+/* ===== الأحداث ===== */
+$('cableInput').oninput  = e => { state.cable  = Math.max(0, +e.target.value || 0); render(); };
+$('boxInput').oninput    = e => { state.box    = Math.max(0, +e.target.value || 0); render(); };
+$('marginInput').oninput = e => { state.margin = Math.max(0, +e.target.value || 0); render(); };
+$('techToggle').onchange = e => { document.body.classList.toggle('tech', e.target.checked); render(); };
+
+/* الثيم: داكن/فاتح مع الحفظ في المتصفح */
+function setTheme(t){
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('cz_theme', t); } catch(e){}
+}
+try { const t = localStorage.getItem('cz_theme'); if (t) setTheme(t); } catch(e){}
+$('themeBtn').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+
+/* القائمة الجانبية */
+const toggleSide = open => { $('sidebar').classList.toggle('open', open); $('overlay').classList.toggle('show', open); };
+$('burger').onclick  = () => toggleSide(true);
+$('overlay').onclick = () => toggleSide(false);
+document.querySelectorAll('.sidebar a').forEach(a => a.onclick = () => toggleSide(false));
+
+/* إشعار منبثق */
+let toastTimer;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* زر لوحة التحكم: سيتم بناؤها في الجزء 4 */
+$('adminBtn').onclick = () => { location.href = 'admin.html'; };
+
+/* ===== إرسال الطلب (الدفع عند التسليم) ===== */
+$('sendBtn').onclick = () => $('orderDlg').showModal();
+$('cancelBtn').onclick = () => $('orderDlg').close();
+
+// هذه الدالة مكان الربط بقاعدة البيانات. حالياً بتحفظ الطلب في المتصفح للتجربة.
+const SUPABASE_URL = (window.CZ || {}).URL;   // من ملف config.js
+const SUPABASE_ANON_KEY = (window.CZ || {}).KEY;   // مفتاح anon العام (آمن بشرط RLS)
+const sb = (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes('YOUR-')) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+async function sendOrder(order){
+  if (sb){                                   // الوضع الحقيقي: الحفظ في جدول orders
+    const { error } = await sb.from('orders').insert(order);
+    if (error) throw error;
+    return;
+  }
+  // وضع التجربة (قبل إدخال بيانات Supabase): الحفظ في المتصفح فقط
+  const list = JSON.parse(localStorage.getItem('cz_orders') || '[]');
+  list.push(order); localStorage.setItem('cz_orders', JSON.stringify(list));
+}
+
+$('confirmBtn').onclick = async () => {
+  const name = $('oName').value.trim(), phone = $('oPhone').value.trim(), addr = $('oAddr').value.trim();
+  if (!name || !addr) return toast('اكتب الاسم والعنوان');
+  if (!/^01[0125]\d{8}$/.test(phone)) return toast('رقم الموبايل غير صحيح');   // صيغة أرقام مصر
+  const r = calculate();
+  const r2 = x => Math.round(x * 100) / 100;                 // تقريب لخانتين عشريتين
+  if (sb && r.lines.some(l => !l.pid)) return toast('الأسعار لم تُحمّل بعد، حدّث الصفحة وجرّب مرة ثانية');
+  const profit = r2(r.profit);
+  try {
+    await sendOrder({ name, phone, address: addr, payment: 'COD',
+      items: r.lines.map(l => l.label),                              // أسماء البنود للعرض
+      lines: r.lines.map(l => ({ product_id: l.pid, qty: l.qty })),  // البنود الحقيقية للتحقق في الخادم
+      cost: r2(r.cost), profit, total: r2(r.cost + profit), state: {...state} });
+  } catch(e){
+    console.error(e);
+    // الخادم رفض السعر: غالباً المشرف عدّل الأسعار بعد تحميل الصفحة
+    return toast(String(e.message || '').includes('price mismatch') ? 'الأسعار اتحدّثت، حدّث الصفحة وجرّب تاني' : 'تعذر إرسال الطلب، حاول مرة أخرى');
+  }
+  $('orderDlg').close();
+  toast('تم إرسال طلبك، هنتواصل معاك قريب');
+};
+
+/* ===== تحميل الأسعار الحية من Supabase (سعر الفني فقط، بدون التكلفة) ===== */
+// تسمية المنتجات في الجدول: category=camera (spec.res) | dvr (spec.channels) | cable (سعر المتر) | box | rack | hdd
+async function loadPrices(){
+  if (!sb) return;                                   // بدون ربط: تبقى الأسعار التجريبية
+  const { data, error } = await sb.from('products').select('id,brand,category,spec,tech_price').eq('active', true);
+  if (error || !data || !data.length) return;
+  const P = {};
+  data.forEach(p => {
+    const price = +p.tech_price;
+    if (p.category === 'camera' || p.category === 'dvr'){
+      P[p.brand] = P[p.brand] || { name: p.brand.charAt(0).toUpperCase() + p.brand.slice(1), cam: {}, dvr: {}, camId: {}, dvrId: {} };
+      if (p.category === 'camera'){ P[p.brand].cam[p.spec.res] = price; P[p.brand].camId[p.spec.res] = p.id; }
+      else { P[p.brand].dvr[p.spec.channels] = price; P[p.brand].dvrId[p.spec.channels] = p.id; }
+    } else if (p.category === 'cable'){ CABLE_PER_M = price; IDS.cable = p.id; }
+    else if (p.category === 'box'){ BOX_PRICE = price; IDS.box = p.id; }
+    else if (ACCESSORIES[p.category]){ ACCESSORIES[p.category].price = price; IDS[p.category] = p.id; }
+  });
+  // نعتمد فقط الماركات المكتملة (فيها كاميرا ودي في آر)
+  const ok = Object.keys(P).filter(b => Object.keys(P[b].cam).length && Object.keys(P[b].dvr).length);
+  if (ok.length){
+    Object.keys(PRICES).forEach(k => delete PRICES[k]);
+    ok.forEach(b => PRICES[b] = P[b]);
+    if (!PRICES[state.brand]) state.brand = ok[0];
+    if (!PRICES[state.brand].cam[state.res]) state.res = Object.keys(PRICES[state.brand].cam)[0];
+  }
+  render();
+}
+
+/* ===== تهيئة أولية ===== */
+$('waBtn').href = 'https://wa.me/' + WHATSAPP;
+$('yr').textContent = new Date().getFullYear();
+render();
+loadPrices();
+</script>
+<!-- Three.js نسخة ثابتة r128 ثم محرك المصمم (لازم يكون بجانب index.html) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="designer.js"></script>
+</body>
+</html>
