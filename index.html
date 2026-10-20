@@ -14,39 +14,39 @@
 <style>
 /* ===== 1) الألوان: عدّل من هنا فقط ===== */
 :root{
-  --bg:#1b1b1d;      /* الخلفية الأساسية */
-  --card:#242526;    /* البطاقات */
-  --blue:#007fff;    /* أزرق نيون */
-  --orange:#ff7a1a;  /* برتقالي نيون */
-  --text:#e3e3e3;    /* العناوين والنصوص */
-  --muted:#8d949e;   /* الشروحات */
-  --line:#34363a;    /* الحدود */
+  --bg:#0b0b0c;      /* الخلفية: أسود لامع */
+  --card:#151517;    /* البطاقات */
+  --gold:#b8963e;    /* ذهبي مطفي (اللون الأساسي) */
+  --gold2:#d4af37;   /* ذهبي مضيء (للتوهج والأسعار) */
+  --text:#ece7d9;    /* العناوين والنصوص (عاجي دافئ) */
+  --muted:#9a9484;   /* الشروحات */
+  --line:#2e2a20;    /* الحدود */
   --nav-h:64px;      /* ارتفاع الشريط العلوي */
 }
 /* الثيم الفاتح (يتفعل بزر تبديل الثيم) */
 [data-theme="light"]{
-  --bg:#f2f4f7; --card:#ffffff; --text:#1b1b1d; --muted:#5b636e; --line:#d8dce2;
+  --bg:#f4f1ea; --card:#ffffff; --text:#1b1b1d; --muted:#5b636e; --line:#d8dce2;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 12px)}
 body{background:var(--bg);color:var(--text);font-family:'Cairo',Tahoma,sans-serif;line-height:1.7;transition:background .3s,color .3s}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer;border:0;color:inherit}
-:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
 
 /* ===== 2) الشريط العلوي (Navbar) ===== */
 .navbar{position:fixed;inset:0 0 auto 0;height:var(--nav-h);background:var(--card);border-bottom:1px solid var(--line);z-index:50}
 .navbar .wrap{height:100%;display:flex;align-items:center;gap:14px}
 .logo{font-weight:800;font-size:1.3rem}
-.logo b{color:var(--blue);text-shadow:0 0 12px var(--blue)}      /* توهج اللوجو */
+.logo b{color:var(--gold);text-shadow:0 0 12px var(--gold)}      /* توهج اللوجو */
 .links{display:flex;gap:22px;margin-inline-start:auto}
 .links a{color:var(--muted);transition:color .2s}
-.links a:hover{color:var(--blue)}
+.links a:hover{color:var(--gold)}
 .icon-btn{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 12px;transition:.2s}
-.icon-btn:hover{border-color:var(--blue);box-shadow:0 0 12px rgba(0,127,255,.5)}
-.admin-btn{background:var(--orange);color:#1b1b1d;font-weight:600;border-radius:10px;padding:6px 14px;transition:.2s}
-.admin-btn:hover{box-shadow:0 0 16px var(--orange)}
+.icon-btn:hover{border-color:var(--gold);box-shadow:0 0 12px rgba(184,150,62,.5)}
+.admin-btn{background:var(--gold2);color:#1b1b1d;font-weight:600;border-radius:10px;padding:6px 14px;transition:.2s}
+.admin-btn:hover{box-shadow:0 0 16px var(--gold2)}
 .burger{display:none}
 
 /* القائمة الجانبية للموبايل (Sidebar) */
@@ -54,7 +54,7 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
   transform:translateX(100%);transition:transform .3s;z-index:70;padding:80px 20px 20px;display:flex;flex-direction:column;gap:14px}
 .sidebar.open{transform:translateX(0)}
 .sidebar a{padding:10px 12px;border-radius:10px;color:var(--muted)}
-.sidebar a:hover{background:var(--bg);color:var(--blue)}
+.sidebar a:hover{background:var(--bg);color:var(--gold)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:.3s;z-index:60}
 .overlay.show{opacity:1;pointer-events:auto}
 @media (max-width:800px){
@@ -66,13 +66,13 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 /* ===== 3) الواجهة الرئيسية (Hero) ===== */
 .hero{padding:calc(var(--nav-h) + 56px) 0 48px;text-align:center}
 .hero h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:800;line-height:1.35}
-.hero h1 span{color:var(--blue);text-shadow:0 0 24px rgba(0,127,255,.7)}
+.hero h1 span{color:var(--gold);text-shadow:0 0 24px rgba(184,150,62,.7)}
 .hero p{color:var(--muted);max-width:560px;margin:14px auto 26px}
 .btn{display:inline-block;padding:12px 26px;border-radius:12px;font-weight:600;font-size:1rem;transition:.2s}
-.btn-blue{background:var(--blue);color:#fff}
-.btn-blue:hover{box-shadow:0 0 22px var(--blue);transform:translateY(-2px)}
-.btn-orange{background:var(--orange);color:#1b1b1d}
-.btn-orange:hover{box-shadow:0 0 22px var(--orange);transform:translateY(-2px)}
+.btn-blue{background:var(--gold);color:#14110a}
+.btn-blue:hover{box-shadow:0 0 22px var(--gold);transform:translateY(-2px)}
+.btn-orange{background:var(--gold2);color:#1b1b1d}
+.btn-orange:hover{box-shadow:0 0 22px var(--gold2);transform:translateY(-2px)}
 
 /* ===== 4) بطاقات الخدمات (Features Grid) ===== */
 section{padding:40px 0}
@@ -81,8 +81,8 @@ h2.title{font-size:1.6rem;margin-bottom:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;transition:transform .25s,box-shadow .25s,border-color .25s}
 /* تأثير النيون + الارتفاع 5px عند التمرير أو اللمس */
-.card:hover,.card:active{transform:translateY(-5px);border-color:var(--blue);box-shadow:0 0 0 1px var(--blue),0 10px 30px rgba(0,127,255,.35)}
-.card .ico{font-size:1.8rem;margin-bottom:8px;filter:drop-shadow(0 0 8px var(--orange))}
+.card:hover,.card:active{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 10px 30px rgba(184,150,62,.35)}
+.card .ico{font-size:1.8rem;margin-bottom:8px;filter:drop-shadow(0 0 8px var(--gold2))}
 .card h3{font-size:1.05rem;margin-bottom:4px}
 .card p{color:var(--muted);font-size:.92rem}
 
@@ -96,24 +96,24 @@ h2.title{font-size:1.6rem;margin-bottom:6px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 /* الخيارات القابلة للنقر (Click-to-Select) */
 .chip{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 16px;transition:.2s}
-.chip:hover{border-color:var(--blue);transform:translateY(-2px)}
-.chip.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 16px rgba(0,127,255,.7)}
+.chip:hover{border-color:var(--gold);transform:translateY(-2px)}
+.chip.active{background:var(--gold);border-color:var(--gold);color:#14110a;box-shadow:0 0 16px rgba(184,150,62,.7)}
 input[type=number],input[type=text],input[type=tel],textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:1rem}
-input:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 10px rgba(0,127,255,.5)}
+input:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 10px rgba(184,150,62,.5)}
 .row{display:flex;gap:10px;align-items:center}
 .switch{display:flex;align-items:center;gap:8px;margin-bottom:14px;color:var(--muted);cursor:pointer}
-.tech-only{display:none;border:1px dashed var(--orange);border-radius:12px;padding:14px;margin-bottom:16px}
+.tech-only{display:none;border:1px dashed var(--gold2);border-radius:12px;padding:14px;margin-bottom:16px}
 body.tech .tech-only{display:block}      /* وضع الفني يظهر الأقسام المخفية */
 .line-cost{display:none}                  /* تكلفة كل بند: مخفية عن العميل */
 body.tech .line-cost{display:inline}
 
 /* باقة العميل */
-.package{position:sticky;top:calc(var(--nav-h) + 12px);border-color:var(--blue);box-shadow:0 0 24px rgba(0,127,255,.25)}
+.package{position:sticky;top:calc(var(--nav-h) + 12px);border-color:var(--gold);box-shadow:0 0 24px rgba(184,150,62,.25)}
 .package ul{list-style:none;margin:10px 0 14px}
 .package li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.95rem}
 .package li span:last-child{color:var(--muted)}
 .total{display:flex;justify-content:space-between;align-items:baseline;margin:12px 0}
-.total strong{font-size:1.9rem;color:var(--orange);text-shadow:0 0 14px rgba(255,122,26,.6)}
+.total strong{font-size:1.9rem;color:var(--gold2);text-shadow:0 0 14px rgba(212,175,55,.6)}
 .tech-box{display:none;background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.92rem}
 body.tech .tech-box{display:block}
 .tech-box div{display:flex;justify-content:space-between}
@@ -121,29 +121,52 @@ body.tech .tech-box{display:block}
 .send{width:100%}
 
 /* نافذة بيانات العميل */
-dialog{margin:auto;background:var(--card);color:var(--text);border:1px solid var(--blue);border-radius:16px;padding:22px;width:min(420px,92vw);box-shadow:0 0 40px rgba(0,127,255,.4)}
+dialog{margin:auto;background:var(--card);color:var(--text);border:1px solid var(--gold);border-radius:16px;padding:22px;width:min(420px,92vw);box-shadow:0 0 40px rgba(184,150,62,.4)}
 dialog::backdrop{background:rgba(0,0,0,.7)}
 dialog .field{margin-bottom:12px}
 dialog .field label{display:block;color:var(--muted);font-size:.9rem;margin-bottom:4px}
 
 /* إشعار منبثق */
-.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,40px);background:var(--card);border:1px solid var(--orange);border-radius:12px;padding:10px 18px;opacity:0;transition:.3s;z-index:99;box-shadow:0 0 20px rgba(255,122,26,.4)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,40px);background:var(--card);border:1px solid var(--gold2);border-radius:12px;padding:10px 18px;opacity:0;transition:.3s;z-index:300;box-shadow:0 0 20px rgba(212,175,55,.4)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 footer{border-top:1px solid var(--line);padding:24px 0;text-align:center;color:var(--muted);font-size:.9rem;margin-top:30px}
 
 /* ===== المصمم ثلاثي الأبعاد ===== */
-.d3-bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
-.d3-bar .chip{white-space:nowrap;min-height:44px;flex:0 0 auto}
-.d3-opts,.d3-sel{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+#d3{position:relative}
+.d3-stage{position:relative;height:min(78vh,640px);min-height:440px;background:#050506;border:1px solid var(--gold);border-radius:16px;overflow:hidden;box-shadow:0 0 28px rgba(184,150,62,.35)}
+.d3-stage canvas{width:100%;height:100%;display:block;touch-action:none}
+/* وضع ملء الشاشة: المصمم يغطي الصفحة كلها (الهيدر وباقي العناصر تحته) */
+#d3.d3-full{position:fixed;inset:0;z-index:200;background:#050506}
+#d3.d3-full .d3-stage{height:100vh;height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none}
+.d3-fs{position:absolute;top:8px;left:8px;z-index:3;min-height:44px;min-width:44px;font-size:1.2rem;background:rgba(11,11,12,.7)}
+/* العمود الجانبي الشفاف: رأسي بطول الشاشة ويتمرر عند الحاجة */
+.d3-side{position:absolute;top:0;bottom:0;right:0;width:64px;z-index:2;display:flex;flex-direction:column;gap:5px;padding:8px 5px;overflow-y:auto;
+  background:rgba(11,11,12,.38);border-inline-start:1px solid rgba(184,150,62,.35);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.d3-side::-webkit-scrollbar{display:none}
+.d3-side h5{flex:0 0 auto;text-align:center;font-size:.68rem;font-weight:600;color:var(--gold2);border-bottom:1px solid rgba(184,150,62,.35);padding:2px 0;margin-top:4px}
+.d3-btn{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50px;padding:3px 2px;background:rgba(21,21,23,.55);
+  border:1px solid rgba(184,150,62,.25);border-radius:10px;color:var(--text);font-size:.64rem;line-height:1.2;transition:.2s}
+.d3-btn span{font-size:1.2rem}
+.d3-btn:hover{border-color:var(--gold2)}
+.d3-btn.active{background:var(--gold);color:#14110a;box-shadow:0 0 14px rgba(212,175,55,.6)}
+.d3-lbl{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;color:var(--muted);font-size:.62rem;gap:2px}
+.d3-side select{width:100%;background:rgba(21,21,23,.85);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 2px;font-size:.75rem}
+/* التلميح والإحصائيات فوق المشهد */
+.d3-top{position:absolute;top:8px;left:62px;right:72px;z-index:1;pointer-events:none;text-shadow:0 1px 4px #000}
+.d3-hint{color:var(--gold2);font-size:.85rem}
+.d3-hud{color:var(--text);font-size:.78rem;margin-top:2px}
+/* لوحة العنصر المحدد (تظهر أسفل المشهد) */
+.d3-sel{position:absolute;left:8px;right:72px;bottom:8px;z-index:2;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 10px;
+  background:rgba(11,11,12,.78);border:1px solid rgba(184,150,62,.4);border-radius:12px}
 .d3-sel[hidden]{display:none}
-.d3-sel label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.9rem}
-#d3CamCtl{display:none;flex-wrap:wrap;gap:10px;align-items:center}
-.d3-opts select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
-/* مساحة الرسم: سوداء بحدود نيون */
-.d3-wrap{height:min(70vh,560px);min-height:380px;background:#0a0a0c;border:1px solid var(--blue);border-radius:16px;overflow:hidden;box-shadow:0 0 28px rgba(0,127,255,.4)}
-.d3-wrap canvas{width:100%;height:100%;display:block;touch-action:none}
-.d3-hint{color:var(--orange);font-size:.92rem;margin-top:8px;min-height:1.5em}
-.d3-hud{color:var(--muted);font-size:.9rem;margin-top:6px}
+#d3CamCtl{display:none;flex-direction:column;gap:6px;width:100%}
+.d3-r{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.d3-sel label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.85rem}
+.d3-sel select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+.d3-sel input[type=range]{width:110px;accent-color:var(--gold2)}
+
+/* لمعة الأسود الملكي: تدرج خفيف للبطاقات في الثيم الداكن */
+[data-theme="dark"] .card,[data-theme="dark"] .panel,[data-theme="dark"] .navbar,[data-theme="dark"] .sidebar{background:linear-gradient(145deg,#1b1b1e 0%,#0e0e10 60%,#151518 100%)}
 
 /* احترام من يفضّل تقليل الحركة */
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
@@ -233,7 +256,7 @@ footer{border-top:1px solid var(--line);padding:24px 0;text-align:center;color:v
 
         <!-- خانات الفني: مخفية عن العميل -->
         <div class="tech-only">
-          <label class="cap" style="color:var(--orange)">هامش الربح / المصنعية</label>
+          <label class="cap" style="color:var(--gold2)">هامش الربح / المصنعية</label>
           <div class="chips" id="modeChips" style="margin-bottom:10px"></div>
           <input type="number" id="marginInput" min="0" step="1" value="20" aria-label="قيمة الربح">
         </div>
