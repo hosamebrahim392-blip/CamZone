@@ -4,6 +4,6 @@
    مهم: ضع هنا مفتاح anon (العام) فقط. لا تضع أبداً مفتاح service_role.
    ============================================================ */
 window.CZ = {
-  URL: 'https://YOUR-PROJECT.supabase.co',   // رابط المشروع
-  KEY: 'YOUR-ANON-PUBLIC-KEY'                // مفتاح anon / public
+  URL: 'https://mzbuewwnhbonsebufwon.supabase.co',   // رابط المشروع
+  KEY: 'sb_publishable_z2L4rJGV06RZa_nU2zsqVA_RM5OuazB'                // مفتاح anon / public
 };
