@@ -1,2 +1,2 @@
-NEXT_PUBLIC_SUPABASE_URL=https://mzbuewwnhbonsebufwon.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=mzbuewwnhbonsebufwon
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_z2L4rJGV06RZa_nU2zsqVA_RM5OuazB
